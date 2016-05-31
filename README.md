@@ -1,9 +1,9 @@
-# 5minutes
+# 5minutes - Essential Security for Linux Servers
 
 Secure your Linux server with single command.
 
-A while back, I wrote this (article)[1] about what you should do on first five minutes after you get new server.
-Doing so manually is quite boring, and error prone. So, I tried to automate with (Ansible)[2], and added few extra
+A while back, I wrote this [article][1] about what you should do on first five minutes after you get new server.
+Doing so manually is quite boring, and error prone. So, I tried to automate with [Ansible][2], and added few extra
 security feature like completely disabling root and password login. 
 
 
