@@ -48,7 +48,7 @@ If you are wondering what it does, here it is:
 There are few other variables that you need/might want to change. See `vars:` defined in `5minutes.yml` file.
 
 - `server_user_name`: default `trinity`
-- `logwatch_email`: default `devops@example.com`, you won't report email from `logwatch` if you don' change.
+- `logwatch_email`: default `devops@example.com`, you won't get report email from `logwatch` if you don't change.
 - `user_public_keys`: default `~/.ssh/id_rsa.pub`, if you use different key pair name, you need to change this path
  to public key file.
 
