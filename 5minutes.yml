@@ -1,0 +1,51 @@
+---
+- name: First 5 minutes in new servers
+  hosts: webservers
+  become: yes
+
+  vars:
+    logwatch_email: devops@example.com
+    server_user_name: uhura
+    user_public_keys:
+      - ~/.ssh/id_rsa.pub
+
+    required_packages:
+      - ufw
+      - fail2ban
+      - unattended-upgrades
+      - logwatch
+  
+  tasks:
+    - name: Update APT package cache
+      apt: update_cache=yes
+
+    - name: Perform aptitude safe-upgrade
+      apt: upgrade=yes
+
+    - name: Add new user with sudo permission
+      user: name={{ server_user_name }} shell=/bin/bash group=sudo
+
+    - name: Add authorized_keys for the user
+      authorized_key: user={{ server_user_name }} key="{{ lookup('file', item) }}"
+      with_items:
+        - "{{ user_public_keys }}"
+
+    - name: Disallow root SSH access
+      action: lineinfile dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
+      notify: Restart sshd
+
+    - name: Disallow password authentication
+      action: lineinfile dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
+      notify: Restart sshd
+
+    - name: Install required packages
+      apt: state=installed pkg={{ item }}
+      with_items: 
+      - "{{ required_packages }}"
+    
+    - name: Start ufw
+      service: name=ufw state=started
+
+  handlers:
+    - name: Restart sshd
+      service: name=sshd state=restarted
