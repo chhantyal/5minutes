@@ -11,11 +11,11 @@ and added few extra security features like completely disabling root and passwor
 
 So you have new servers with root access, please follow following steps.
  
-1. Install Ansible on your local computer. It's really easy if you have updated Python
+1. Install Ansible on your local computer. It's really easy if you have updated `Python
  
  ```sudo pip install ansible```
 
-2. Clone this repo and change `hosts` file with IP address your servers.
+2. Clone this repo and change `hosts` file with IP address of your servers.
  
  ```git clone git@github.com:chhantyal/5minutes.git && cd 5minutes && open -t hosts```
 
@@ -52,10 +52,11 @@ There are few other variables that you need/might want to change. See `vars:` de
 - `user_public_keys`: default `~/.ssh/id_rsa.pub`, if you use different key pair name, you need to change this path
  to public key file.
 
-Ansible is perfect for this automation because it's dead simple to install and use without having to learn it.
+Ansible is perfect for this automation because it's dead simple to install and use without having to learn it.    
 It uses SSH as agent, so you don't need to setup anything else.
 
-PS: This is tested and works on Ubuntu, as that's what I use. You are welcome to add support for other distributions :)
+PS: This is tested and works on Ubuntu, as that's what I use.    
+You are welcome to add support for other distributions :)
 
 [1]: https://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
 [2]: https://www.ansible.com
