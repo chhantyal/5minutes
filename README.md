@@ -1,4 +1,4 @@
-# 5minutes - Essential Security for Linux Servers
+# 5minutes - Security Essentials
 
 Secure your Linux server with single command.
 
