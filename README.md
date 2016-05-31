@@ -1,6 +1,6 @@
 # 5Minutes - Server Security Essentials
 
-Secure your Linux server with single command!
+**Secure your Linux server with single command!**
 
 A while back, I read this [article][1] about what you should do first when you get new server.
 Doing so manually is quite boring though, and error prone. So, I tried to automate with [Ansible][2], 
