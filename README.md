@@ -27,6 +27,16 @@ Using it is very easy. From within in `5minutes` directory, run this Ansible com
 
 Enter password for your server and that't it. Single command!
 
+## Try with Vagrant
+
+You can try on Vagrant box before running this on real servers.
+There is `Vagrantfile` included.
+
+```vagrant up```
+
+Change `hosts` to `127.1.1.0:2200` and run command:
+
+```ansible-playbook 5minutes.yml -u vagrant --private-key .vagrant/machines/default/virtualbox/private_key```
 
 ### Under the Hood
 

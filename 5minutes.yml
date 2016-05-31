@@ -2,6 +2,7 @@
 - name: First 5 minutes in new servers
   hosts: webservers
   become: yes
+  become_user: root
 
   vars:
     server_user_name: trinity
@@ -74,4 +75,4 @@
                   state=present create=yes
   handlers:
     - name: Restart sshd
-      service: name=sshd state=restarted
+      service: name=ssh state=restarted
