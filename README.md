@@ -9,7 +9,7 @@ and added few extra security features like completely disabling root and passwor
 
 ## Install
 
-So you have new servers with root access, please follow following steps.
+So you have new servers with root access, please follow these steps.
  
 1. Install Ansible on your local computer. It's really easy if you have updated `Python
  
@@ -39,7 +39,7 @@ If you are wondering what it does, here it is:
 - Adds specified public key in variable `user_public_keys` in ssh authorized_keys.
 - Disables root SSH access. Yes, from next time you need to use new user to access server.
 - Disables password authentication. Again you will need to use new user with SSH public key auth method.
-- Installs `ufw` as firewall, `fail2ban` to ban IPs that show the malicious signs, `logwatch` to analyze and report logs.
+- Installs `ufw` as firewall, `fail2ban` to ban IPs that show malicious signs, `logwatch` to analyze and report logs.
 - It also installs `unattended-upgrades` to enable automatic security updates.
 
 
