@@ -1,6 +1,6 @@
 # 5Minutes - Server Security Essentials
 
-Secure your Linux server with single command.
+Secure your Linux server with single command!
 
 A while back, I read this [article][1] about what you should do first when you get new server.
 Doing so manually is quite boring though, and error prone. So, I tried to automate with [Ansible][2], 
@@ -17,15 +17,13 @@ So you have new servers with root access, please follow following steps.
 
 2. Clone this repo and change `hosts` file with IP address your servers.
  
- ```
- git clone git@github.com:chhantyal/5minutes.git && cd 5minutes && open -t hosts
- ```
+ ```git clone git@github.com:chhantyal/5minutes.git && cd 5minutes && open -t hosts```
 
 ## Usage
 
 Using it is very easy. From within in `5minutes` directory, run this Ansible command.
 
-```ansible-playbook 5minutes.yml -u uhura -K```
+```ansible-playbook 5minutes.yml -u <user_name> -K```
 
 Enter password for your server and that't it. Single command!
 
@@ -54,7 +52,10 @@ There are few other variables that you need/might want to change. See `vars:` de
 - `user_public_keys`: default `~/.ssh/id_rsa.pub`, if you use different key pair name, you need to change this path
  to public key file.
 
-PS: This is tested and works on Ubuntu, as that's the I use. You are welcome to add support for other distributions :)
+Ansible is perfect for this automation because it's dead simple to install and use without having to learn it.
+It uses SSH as agent, so you don't need to setup anything else.
+
+PS: This is tested and works on Ubuntu, as that's what I use. You are welcome to add support for other distributions :)
 
 [1]: https://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
 [2]: https://www.ansible.com
