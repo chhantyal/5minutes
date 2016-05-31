@@ -1,11 +1,11 @@
-# 5minutes - Security Essentials
+# 5Minutes - Server Security Essentials
 
 Secure your Linux server with single command.
 
-A while back, I wrote this [article][1] about what you should do on first five minutes after you get new server.
-Doing so manually is quite boring, and error prone. So, I tried to automate with [Ansible][2], and added few extra
-security feature like completely disabling root and password login. 
-
+A while back, I read this [article][1] about what you should do first when you get new server.
+Doing so manually is quite boring though, and error prone. So, I tried to automate with [Ansible][2], 
+and added few extra security features like completely disabling root and password login etc.
+ 
 
 ## Install
 
@@ -16,9 +16,12 @@ So you have new servers with root access, please follow following steps.
  ```sudo pip install ansible```
 
 2. Clone this repo and change `hosts` file with IP address your servers.
+ 
+ ```
+ git clone git@github.com:chhantyal/5minutes.git && cd 5minutes && open -t hosts
+ ```
 
-
-## Use
+## Usage
 
 Using it is very easy. From within in `5minutes` directory, run this Ansible command.
 
@@ -31,6 +34,7 @@ Enter password for your server and that't it. Single command!
 
 If you are wondering what it does, here it is:
 
+- Connects to server using SSH
 - Updates APT cache
 - Performs APT upgrade
 - Adds user specified in variable `server_user_name` which has sudo permission
@@ -40,7 +44,17 @@ If you are wondering what it does, here it is:
 - Installs `ufw` as firewall, `fail2ban` to ban IPs that show the malicious signs, `logwatch` to analyze and report logs.
 - It also installs `unattended-upgrades` to enable automatic security updates.
 
-PS: This is tested and works on Ubuntu, as that's what I use :)
+
+### Notes
+
+There are few other variables that you need/might want to change. See `vars:` defined in `5minutes.yml` file.
+
+- `server_user_name`: default `trinity`
+- `logwatch_email`: default `devops@example.com`, you won't report email from `logwatch` if you don' change.
+- `user_public_keys`: default `~/.ssh/id_rsa.pub`, if you use different key pair name, you need to change this path
+ to public key file.
+
+PS: This is tested and works on Ubuntu, as that's the I use. You are welcome to add support for other distributions :)
 
 [1]: https://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
 [2]: https://www.ansible.com

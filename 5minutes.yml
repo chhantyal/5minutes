@@ -4,8 +4,8 @@
   become: yes
 
   vars:
+    server_user_name: trinity
     logwatch_email: devops@example.com
-    server_user_name: uhura
     user_public_keys:
       - ~/.ssh/id_rsa.pub
 
