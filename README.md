@@ -21,7 +21,8 @@ So you have new servers with root access, please follow these steps.
 
 3. Change var `server_user_password` in `vars.yml` file with crypted password. 
 This will be password for `server_user_name`. To generate, run:
- ```sudo pip install passlib```
+
+ ```sudo pip install passlib```    
  ```python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())"```
 
 ## Usage
