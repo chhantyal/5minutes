@@ -19,6 +19,11 @@ So you have new servers with root access, please follow these steps.
  
  ```git clone git@github.com:chhantyal/5minutes.git && cd 5minutes && open -t hosts```
 
+3. Change var `server_user_password` in `vars.yml` file with crypted password. 
+This will be password for `server_user_name`. To generate, run:
+ ```sudo pip install passlib```
+ ```python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())"```
+
 ## Usage
 
 Using it is very easy. From within in `5minutes` directory, run this Ansible command.
@@ -34,7 +39,7 @@ There is `Vagrantfile` included.
 
 ```vagrant up```
 
-Change `hosts` to `127.1.1.0:2200` and run command:
+Change `hosts` to `127.1.1.0:2200` (see `vagrant up` output for exact port) and run command:
 
 ```ansible-playbook 5minutes.yml -u vagrant --private-key .vagrant/machines/default/virtualbox/private_key```
 
@@ -55,9 +60,10 @@ If you are wondering what it does, here it is:
 
 ### Notes
 
-There are few other variables that you need/might want to change. See `vars:` defined in `5minutes.yml` file.
+There are few other variables that you need/might want to change. See `vars:` defined in `vars.yml` file.
 
 - `server_user_name`: default `trinity`
+- `server_user_password`: Please change this. See [Ansible docs][3]
 - `logwatch_email`: default `devops@example.com`, you won't get report email from `logwatch` if you don't change.
 - `user_public_keys`: default `~/.ssh/id_rsa.pub`, if you use different key pair name, you need to change this path
  to public key file.
@@ -65,8 +71,8 @@ There are few other variables that you need/might want to change. See `vars:` de
 Ansible is perfect for this automation because it's dead simple to install and use without having to learn it.    
 It uses SSH as agent, so you don't need to setup anything else.
 
-PS: This is tested and works on Ubuntu, as that's what I use.    
-You are welcome to add support for other distributions :)
+PS: This is tested on Ubuntu, as that's what I use. You are welcome to add support for other distributions :)
 
 [1]: https://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
 [2]: https://www.ansible.com
+[3]: http://docs.ansible.com/ansible/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module

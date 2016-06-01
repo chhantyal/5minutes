@@ -3,33 +3,24 @@
   hosts: webservers
   become: yes
   become_user: root
-
-  vars:
-    server_user_name: trinity
-    logwatch_email: devops@example.com
-    user_public_keys:
-      - ~/.ssh/id_rsa.pub
-
-    required_packages:
-      - ufw
-      - fail2ban
-      - unattended-upgrades
-      - logwatch
-
-    ufw_allowed_ports:
-      - 22
-      - 80
-      - 443
+  vars_files:
+    - vars.yml
 
   tasks:
-    - name: Update APT package cache
+    - name: Update APT packages cache
       apt: update_cache=yes
 
     - name: Perform aptitude safe-upgrade
       apt: upgrade=yes
 
-    - name: Add new user with sudo permission
-      user: name={{ server_user_name }} shell=/bin/bash group=sudo
+    - name: Create new user
+      user: name={{ server_user_name }} password={{ server_user_password }} shell=/bin/bash
+
+    - name: Add user to sudoers
+      lineinfile: dest=/etc/sudoers
+                  regexp="{{ server_user_name }} ALL"
+                  line="{{ server_user_name }} ALL=(ALL) ALL"
+                  state=present
 
     - name: Add authorized_keys for the user
       authorized_key: user={{ server_user_name }} key="{{ lookup('file', item) }}"
@@ -38,11 +29,11 @@
 
     - name: Disallow root SSH access
       action: lineinfile dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
-      notify: Restart sshd
+      notify: Restart ssh
 
     - name: Disallow password authentication
       action: lineinfile dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
-      notify: Restart sshd
+      notify: Restart ssh
 
     - name: Install required packages
       apt: state=installed pkg={{ item }}
@@ -57,7 +48,6 @@
 
     - name: Enable ufw/firewall
       ufw: state=enabled policy=deny
-
 
     - name: Set up Postfix to relay mail
       debconf: name=postfix
@@ -74,5 +64,5 @@
                   line="/usr/sbin/logwatch --output mail --mailto {{ logwatch_email }} --detail high"
                   state=present create=yes
   handlers:
-    - name: Restart sshd
+    - name: Restart ssh
       service: name=ssh state=restarted
