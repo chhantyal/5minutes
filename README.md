@@ -11,7 +11,7 @@ and added few extra security features like completely disabling root and passwor
 
 So you have new servers with root access, please follow these steps.
  
-1. Install Ansible on your local computer. It's really easy if you have updated `Python
+1. Install Ansible on your local computer. It's really easy if you have updated `Python`
  
  ```sudo pip install ansible```
 
