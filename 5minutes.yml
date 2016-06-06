@@ -1,4 +1,5 @@
 ---
+
 - name: First 5 minutes in new servers
   hosts: webservers
   become: yes
@@ -9,9 +10,31 @@
   tasks:
     - name: Update APT packages cache
       apt: update_cache=yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
     - name: Perform aptitude safe-upgrade
       apt: upgrade=yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Register system with Red Hat Network and auto-attach to repositories
+      redhat_subscription: autosubscribe=true username={{ redhat_network_username }} password={{ redhat_network_password }} state=present
+      when: ansible_distribution == 'RedHat'
+
+    - name: Enable Red Hat optional repository
+      command: subscription-manager repos --enable rhel-7-server-optional-rpms
+      when: ansible_distribution == 'RedHat'
+
+    - name: Auto attach available Red Hat Subscriptions 
+      redhat_subscription: state=present username={ password=somepass autosubscribe=true
+      when: ansible_distribution == 'RedHat'
+
+    - name: Install EPEL repository RPM
+      yum: name=http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm state=present
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+    - name: Update YUM packages cache and upgrade packages
+      yum: name=* state=latest update_cache=yes
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
 
     - name: Create new user
       user: name={{ server_user_name }} password={{ server_user_password }} shell=/bin/bash
@@ -29,25 +52,53 @@
 
     - name: Disallow root SSH access
       action: lineinfile dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
-      notify: Restart ssh
+      notify: 
+      - Restart Debian/Ubuntu SSH
+      - Restart RedHat/CentOS SSH
 
     - name: Disallow password authentication
       action: lineinfile dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
-      notify: Restart ssh
+      notify: 
+      - Restart Debian/Ubuntu SSH
+      - Restart RedHat/CentOS SSH
 
-    - name: Install required packages
+    - name: Install required APT packages
       apt: state=installed pkg={{ item }}
       with_items: 
-      - "{{ required_packages }}"
+      - "{{ required_apt_packages }}"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install required YUM packages
+      yum: state=installed pkg={{ item }}
+      with_items:
+      - "{{ required_yum_packages }}"
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+    - name: Start and Enable yum-cron
+      service: name=yum-cron state=started enabled=yes
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+    - name: Start and enable firewalld
+      service: name=firewalld state=started enabled=yes
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
 
     # Allow only ssh and http(s) ports
-    - name: Allow ssh and http(s) connections
+    - name: Allow ssh and http(s) connections 
       ufw: rule=allow port={{ item }}
       with_items:
-        - "{{ ufw_allowed_ports }}"
+        - "{{ firewall_allowed_ports }}"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Allow ssh and http(s) connections
+      firewalld: port={{ item }}/tcp permanent=true state=enabled
+      with_items:
+        - "{{ firewall_allowed_ports }}"
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+      notify: Reload firewalld
 
     - name: Enable ufw/firewall
       ufw: state=enabled policy=deny
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
     - name: Set up Postfix to relay mail
       debconf: name=postfix
@@ -57,6 +108,7 @@
       with_items:
         - { question: 'postfix/mailname', value: '{{ ansible_fqdn }}', vtype: 'string' }
         - { question: 'postfix/main_mailer_type', value: 'Internet Site', vtype: 'string' }
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
     - name: Email logwatch summary daily
       lineinfile: dest=/etc/cron.daily/00logwatch
@@ -64,5 +116,13 @@
                   line="/usr/sbin/logwatch --output mail --mailto {{ logwatch_email }} --detail high"
                   state=present create=yes
   handlers:
-    - name: Restart ssh
+    - name: Restart Debian/Ubuntu SSH
       service: name=ssh state=restarted
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Restart RedHat/CentOS SSH
+      service: name=sshd state=restarted
+      when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+    - name: Reload firewalld
+      service: name=firewalld state=reloaded
