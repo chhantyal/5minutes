@@ -1,5 +1,4 @@
 ---
-
 - name: First 5 minutes in new servers
   hosts: webservers
   become: yes

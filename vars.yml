@@ -16,9 +16,6 @@ redhat_network_username: trinity@example.com
 # TO-DO: Use ansible-vault to encrypt all usernames and passwords
 redhat_network_password: changeme1234
 
-#redhat_network_username: trinity@trinity-example.com
-#redhat_network_password: changeme
-
 required_apt_packages:
   - ufw
   - fail2ban
