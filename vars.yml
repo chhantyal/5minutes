@@ -1,20 +1,34 @@
 ---
 # Please change these variables as you need, especially password
+ansible_ssh_user: trinity
 server_user_name: trinity
 # pip install passlib
 # python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())"
 server_user_password: $6$rounds=656000$etJz1GRgCu9jhIPe$Tj0UzTwuxPvSst4I2kNwUpSWRGCCpu0KCiplwbbv6cZteNQYJ8xpbIw0ufUiZ59FWMhfJDLTCTSq.p93QYdeq0
+
+
+
 logwatch_email: devops@example.com
 user_public_keys:
   - ~/.ssh/id_rsa.pub
 
-required_packages:
+redhat_network_username: trinity@example.com
+# TO-DO: Use ansible-vault to encrypt all usernames and passwords
+redhat_network_password: changeme1234
+
+required_apt_packages:
   - ufw
   - fail2ban
   - unattended-upgrades
   - logwatch
 
-ufw_allowed_ports:
+required_yum_packages:
+  - firewalld
+  - fail2ban
+  - yum-cron
+  - logwatch
+
+firewall_allowed_ports:
   - 22
   - 80
   - 443

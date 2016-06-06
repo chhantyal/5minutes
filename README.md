@@ -25,13 +25,28 @@ This will be password for `server_user_name`. To generate, run:
  ```sudo pip install passlib```    
  ```python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())"```
 
-## Usage
+## Usage on localhost
 
 Using it is very easy. From within in `5minutes` directory, run this Ansible command.
 
 ```ansible-playbook 5minutes.yml -u <user_name> -K```
 
 Enter password for your server and that't it. Single command!
+
+## Remote Usage
+
+1. Change the IP in the hosts variable at the top of 5minutes.yml to the remote target, add your remote target IP to /etc/ansible/hosts or use the included hosts file
+
+2. Set up a ssh key relationship between localhost and the remote target by running these commands:
+
+```ssh-keygen -t rsa```
+```ssh-copy-id remote_user@remote_target_ip```
+
+3. Change the ansible_ssh_user and server_user_name variables at the top of vars.yml to fit your environment
+
+4. Run the playbook
+
+```ansible-playbook 5minutes.yml```
 
 ## Try with Vagrant
 
@@ -49,8 +64,8 @@ Change `hosts` to `127.1.1.0:2200` (see `vagrant up` output for exact port) and 
 If you are wondering what it does, here it is:
 
 - Connects to server using SSH
-- Updates APT cache
-- Performs APT upgrade
+- Updates APT/YUM cache
+- Performs APT/YUM upgrade
 - Adds user specified in variable `server_user_name` which has sudo permission
 - Adds specified public key in variable `user_public_keys` in ssh authorized_keys.
 - Disables root SSH access. Yes, from next time you need to use new user to access server.
@@ -72,7 +87,7 @@ There are few other variables that you need/might want to change. See `vars:` de
 Ansible is perfect for this automation because it's dead simple to install and use without having to learn it.    
 It uses SSH as agent, so you don't need to setup anything else.
 
-PS: This is tested on Ubuntu, as that's what I use. You are welcome to add support for other distributions :)
+PS: This is tested on Ubuntu 16.04, Debian 8, RedHat 7 and CentOS 7
 
 [1]: https://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
 [2]: https://www.ansible.com
