@@ -9,6 +9,7 @@ user_public_keys:
   - ~/.ssh/id_rsa.pub
 
 required_packages:
+  - python
   - ufw
   - fail2ban
   - unattended-upgrades
