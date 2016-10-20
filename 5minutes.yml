@@ -2,24 +2,32 @@
 - name: First 5 minutes in new servers
   hosts: webservers
   become: yes
+  gather_facts: False
   become_user: root
   vars_files:
     - vars.yml
 
   tasks:
+
+
     - name: Update APT packages cache
-      apt: update_cache=yes
+      # Needs to be a raw command because apt module needs python binary already
+      raw: apt-get update -qq
+
+    - name: Install python 2.7
+      # Needs to be a raw command because apt module needs python binary already
+      raw: apt-get install python -qq python2.7
 
     - name: Perform aptitude safe-upgrade
       apt: upgrade=yes
 
     - name: Create new user
-      user: name={{ server_user_name }} password={{ server_user_password }} shell=/bin/bash
+      user: name={{ server_user_name }} password={{ server_user_password |password_hash('sha512') }} shell=/bin/bash
 
     - name: Add user to sudoers
       lineinfile: dest=/etc/sudoers
                   regexp="{{ server_user_name }} ALL"
-                  line="{{ server_user_name }} ALL=(ALL) ALL"
+                  line="{{ server_user_name }} ALL=(ALL:ALL) ALL"
                   state=present
 
     - name: Add authorized_keys for the user
@@ -37,7 +45,7 @@
 
     - name: Install required packages
       apt: state=installed pkg={{ item }}
-      with_items: 
+      with_items:
       - "{{ required_packages }}"
 
     # Allow only ssh and http(s) ports
@@ -55,7 +63,7 @@
                value='{{ item.value }}'
                vtype='{{ item.vtype }}'
       with_items:
-        - { question: 'postfix/mailname', value: '{{ ansible_fqdn }}', vtype: 'string' }
+        - { question: 'postfix/mailname', value: '{{ fqdn }}', vtype: 'string' }
         - { question: 'postfix/main_mailer_type', value: 'Internet Site', vtype: 'string' }
 
     - name: Email logwatch summary daily
