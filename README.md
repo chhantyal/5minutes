@@ -19,7 +19,7 @@ So you have new servers with root access, please follow these steps.
  
  ```git clone git@github.com:chhantyal/5minutes.git && cd 5minutes && open -t hosts```
 
-3. Change var `server_user_password` in `vars.yml` file with crypted password. 
+3. Change var `server_user_password` in `vars.yml` file with crypted password.
 This will be password for `server_user_name`. To generate, run:
 
  ```sudo pip install passlib```    
@@ -27,7 +27,10 @@ This will be password for `server_user_name`. To generate, run:
 
 ## Usage
 
-Using it is very easy. From within in `5minutes` directory, run this Ansible command.
+Using it is very easy. From within in `5minutes` directory, run this Ansible command. Make sure you don't have old entries
+in known_hosts file from the server with the same IP address.
+Also note that you need to login manually into the server before you access it with the ansible script. New server
+should be already in known_hosts
 
 ```ansible-playbook 5minutes.yml -u <user_name> -K```
 
