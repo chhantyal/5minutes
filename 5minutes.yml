@@ -11,7 +11,8 @@
       apt: update_cache=yes
 
     - name: Perform aptitude safe-upgrade
-      apt: upgrade=yes
+      apt:
+          upgrade: dist
 
     - name: Create new user
       user: name={{ server_user_name }} password={{ server_user_password }} shell=/bin/bash
@@ -37,7 +38,7 @@
 
     - name: Install required packages
       apt: state=installed pkg={{ item }}
-      with_items: 
+      with_items:
       - "{{ required_packages }}"
 
     # Allow only ssh and http(s) ports
