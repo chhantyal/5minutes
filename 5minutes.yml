@@ -64,6 +64,10 @@
                   regexp="^/usr/sbin/logwatch"
                   line="/usr/sbin/logwatch --output mail --mailto {{ logwatch_email }} --detail high"
                   state=present create=yes
+
+    - name: Adjust APT update intervals
+      copy: src=apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+
   handlers:
     - name: Restart ssh
       service: name=ssh state=restarted
