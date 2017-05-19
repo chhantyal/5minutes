@@ -65,8 +65,11 @@
                   line="/usr/sbin/logwatch --output mail --mailto {{ logwatch_email }} --detail high"
                   state=present create=yes
 
+    - name: Adjust unattended-upgrades to just install security updates
+      copy: src=templates/50unattended-upgrades dest=/etc/apt/apt.conf.d/50unattended-upgrades
+
     - name: Adjust APT update intervals
-      copy: src=apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+      copy: src=templates/10periodic dest=/etc/apt/apt.conf.d/10periodic
 
   handlers:
     - name: Restart ssh
